@@ -77,6 +77,46 @@ export default function Page() {
     }
   }
 
+  function drawWithCircles() {
+    try {
+      if (
+        canvasOutcome.current.width !== canvas.current.width &&
+        canvasOutcome.current.heigth !== canvas.current.height
+      ) {
+        canvasOutcome.current.width = canvas.current.width;
+        canvasOutcome.current.height = canvas.current.height;
+      }
+      const contextFromSnapshot = canvas.current.getContext('2d', {
+        willReadFrequently: true,
+      });
+      const context = canvasOutcome.current.getContext('2d');
+
+      const pickColor = (x: number, y: number) => {
+        let imgData = contextFromSnapshot.getImageData(x, y, 1, 1);
+        const [r, g, b, a] = imgData.data;
+        return `rgb(${r} ${g} ${b})`;
+      };
+
+      for (let i = 0; i < 10000; ++i) {
+        const x = Math.random() * canvas.current.width;
+        const y = Math.random() * canvas.current.height;
+        context.beginPath();
+        const color = pickColor(x, y);
+
+        const w = Math.random() * 100;
+        const h = Math.random() * 5;
+        context.lineWidth = Math.random();
+
+        context.fillStyle = color;
+        context.roundRect(x, y, w, h, [1, 1, 1, 1]);
+        context.stroke()
+        context.fill();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   return (
     <main className="flex min-h-screen flex-col p-6">
       <video playsInline autoPlay ref={videoElem}></video>
@@ -84,6 +124,7 @@ export default function Page() {
       <canvas id="canvas-outcome" ref={canvasOutcome}></canvas>
       <button onClick={activateCanvas}>Take snapshot</button>
       <button onClick={draw}>Draw</button>
+      <button onClick={drawWithCircles}>Draw with Circles</button>
     </main>
   );
 }
