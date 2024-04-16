@@ -63,6 +63,10 @@ export default function Page() {
     console.log('Canvas is activeted');
   }
 
+  function cancel() {
+    setDrawFunction(null);
+  }
+
   function draw() {
     try {
       if (
@@ -204,6 +208,7 @@ export default function Page() {
       <canvas id="canvas-outcome" ref={canvasOutcome}></canvas>
       <button onClick={activateCanvas}>Take snapshot</button>
       <button onClick={draw}>Draw</button>
+      <button onClick={cancel}>Cancel</button>
       <button onClick={drawWithCircles}>Draw with Circles</button>
       <button onClick={()=>setDrawFunction(() => drawWithLines)}>Draw with Lines</button>
     </main>
