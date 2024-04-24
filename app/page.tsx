@@ -24,13 +24,13 @@ export default function Page() {
   }, []);
 
   React.useEffect(() => {
-    if(!drawFunction) {
+    if (!drawFunction) {
       return;
     }
     let keepRunning = true;
     const callDrawFunction = () => {
       drawFunction();
-      if(keepRunning) {
+      if (keepRunning) {
         window.requestAnimationFrame(callDrawFunction);
       }
     }
@@ -93,11 +93,17 @@ export default function Page() {
         const color = pickColor(x, y);
 
         context.fillStyle = color;
-        context.fillRect(x, y, 10, 10);
+        // context.fillRect(x, y, 20, 10);
+        context.fillRect(x, y, generateRandomNumber(), generateRandomNumber())
+        context.lineDashOffset=40
       }
     } catch (err) {
       console.log(err);
     }
+  }
+
+  function generateRandomNumber() {
+    return Math.floor(Math.random() * 30)
   }
 
   function drawWithCircles() {
@@ -150,55 +156,55 @@ export default function Page() {
     const dr = c1[0] - c2[0];
     const dg = c1[1] - c2[1];
     const db = c1[2] - c2[2];
-    return Math.sqrt(dr*dr + dg*dg + db*db);
+    return Math.sqrt(dr * dr + dg * dg + db * db);
   }
 
   function prepareCanvases() {
-      if (
-        canvasOutcome.current.width !== canvas.current.width &&
-        canvasOutcome.current.heigth !== canvas.current.height
-      ) {
-        canvasOutcome.current.width = canvas.current.width;
-        canvasOutcome.current.height = canvas.current.height;
-      }
-      const contextFromSnapshot = canvas.current.getContext('2d', {
-        willReadFrequently: true,
-      });
-      const context = canvasOutcome.current.getContext('2d');
-      return [contextFromSnapshot, context];
+    if (
+      canvasOutcome.current.width !== canvas.current.width &&
+      canvasOutcome.current.heigth !== canvas.current.height
+    ) {
+      canvasOutcome.current.width = canvas.current.width;
+      canvasOutcome.current.height = canvas.current.height;
+    }
+    const contextFromSnapshot = canvas.current.getContext('2d', {
+      willReadFrequently: true,
+    });
+    const context = canvasOutcome.current.getContext('2d');
+    return [contextFromSnapshot, context];
   }
 
   function drawWithLines() {
-      const [contextFromSnapshot, context] = prepareCanvases();
+    const [contextFromSnapshot, context] = prepareCanvases();
 
-      for (let i = 0; i < 100; ++i) {
-        const x = Math.random() * canvas.current.width;
-        const y = Math.random() * canvas.current.height;
-        context.beginPath();
-        const color = pickColor(contextFromSnapshot, x, y);
+    for (let i = 0; i < 100; ++i) {
+      const x = Math.random() * canvas.current.width;
+      const y = Math.random() * canvas.current.height;
+      context.beginPath();
+      const color = pickColor(contextFromSnapshot, x, y);
 
-        let dx = x;
-        let dy = y;
-        let best = 1000;
-        for(let j = 0; j < 10; ++j) {
-          const tx = x + Math.random() * 40 - 20;
-          const ty = y + Math.random() * 40 - 20;
-          const color2 = pickColor(contextFromSnapshot, tx, ty);
-          const distance = colorDistance(color, color2);
-          if(distance < best) {
-            dx = tx;
-            dy = ty;
-            best = distance;
-          }
+      let dx = x;
+      let dy = y;
+      let best = 1000;
+      for (let j = 0; j < 10; ++j) {
+        const tx = x + Math.random() * 40 - 20;
+        const ty = y + Math.random() * 40 - 20;
+        const color2 = pickColor(contextFromSnapshot, tx, ty);
+        const distance = colorDistance(color, color2);
+        if (distance < best) {
+          dx = tx;
+          dy = ty;
+          best = distance;
         }
-
-        context.lineWidth = 5 + Math.random() * 4;
-
-        context.strokeStyle = `rgb(${color[0]} ${color[1]} ${color[2]})`;
-        context.moveTo(x, y);
-        context.lineTo(dx, dy);
-        context.stroke()
       }
+
+      context.lineWidth = 5 + Math.random() * 4;
+
+      context.strokeStyle = `rgb(${color[0]} ${color[1]} ${color[2]})`;
+      context.moveTo(x, y);
+      context.lineTo(dx, dy);
+      context.stroke()
+    }
   }
 
   return (
@@ -210,7 +216,7 @@ export default function Page() {
       <button onClick={draw}>Draw</button>
       <button onClick={cancel}>Cancel</button>
       <button onClick={drawWithCircles}>Draw with Circles</button>
-      <button onClick={()=>setDrawFunction(() => drawWithLines)}>Draw with Lines</button>
+      <button onClick={() => setDrawFunction(() => drawWithLines)}>Draw with Lines</button>
     </main>
   );
 }
